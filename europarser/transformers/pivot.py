@@ -11,9 +11,9 @@ class PivotTransformer(Transformer):
     def __init__(self):
         super().__init__()
 
-    def transform(self, file: FileToTransform) -> List[Pivot]:
-        self._logger.warning("Processing file " + file.name)
-        soup = BeautifulSoup(file.file, 'html.parser')
+    def transform(self, file_to_transform: FileToTransform) -> List[Pivot]:
+        self._logger.warning("Processing file " + file_to_transform.name)
+        soup = BeautifulSoup(file_to_transform.file, 'html.parser')
 
         corpus = []
 
@@ -52,7 +52,7 @@ class PivotTransformer(Transformer):
 
             corpus.append(Pivot(**doc))
 
-        with open(f"errors-{file.name}.json", "w") as f:
+        with open(f"errors-{file_to_transform.name}.json", "w", encoding="utf-8") as f:
             json.dump([e.dict() for e in self.errors], f, ensure_ascii=False)
 
         return corpus

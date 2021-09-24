@@ -2,7 +2,7 @@ import logging
 from abc import ABC
 from typing import List
 
-from europarser.models import FileToTransform, Error
+from europarser.models import Error, Pivot
 
 
 class Transformer(ABC):
@@ -11,7 +11,7 @@ class Transformer(ABC):
         self.errors: List[Error] = []
         self._logger = logging.getLogger(self.type)
 
-    def transform(self, file_to_transform: FileToTransform) -> str:
+    def transform(self, pivot: List[Pivot]) -> str:
         pass
 
     def _log_error(self, error, article):

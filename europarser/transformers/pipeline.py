@@ -8,7 +8,7 @@ from europarser.transformers.pivot import PivotTransformer
 def pipeline(files: List[FileToTransform], output: Output = "pivot") -> Tuple[str, OutputType, MimeType]:
     pivots: List[Pivot] = []
     for file_to_process in files:
-        transformed: List[Pivot] = PivotTransformer().transform(file=file_to_process)
+        transformed: List[Pivot] = PivotTransformer().transform(file_to_process)
         pivots = [*pivots, *transformed]
     if output == "cluster_tool":
         result = json.dumps({i: article.dict() for i, article in enumerate(pivots)}, ensure_ascii=False)

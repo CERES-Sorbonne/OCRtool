@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Europress Parser</title>
+</head>
+<body>
+<form method="post" enctype="multipart/form-data" action="/upload">
+  <div>
+    <label for="files">Sélectionnez les fichier à convertir</label>
+    <input type="file" id="files" name="files" accept=".html" multiple/>
+  </div>
+   <select name="output" id="output">
+       <option value="pivot">Pivot</option>
+      <option value="cluster_tool">Cluster Tool</option>
+      <option value="txm">TXM</option>
+      <option value="iramuteq">IramuTeq</option>
+  </select>
+  <div>
+    <button>Envoyer</button>
+  </div>
+</form>
+</body>
+</html>
