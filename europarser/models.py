@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel
@@ -24,13 +23,4 @@ class Pivot(BaseModel):
 
 OutputType = Literal["csv", "json", "txt"]
 Output = Literal["pivot", "txm", "iramuteq", "gephi", "cluster_tool"]
-MimeType = Literal["text/csv", "application/json", "text/plain"]
 
-
-def get_mimetype(output_type: OutputType) -> MimeType:
-    if output_type == "csv":
-        return "text/csv"
-    elif output_type == "json":
-        return "application/json"
-    elif output_type == "txt":
-        return "text/plain"

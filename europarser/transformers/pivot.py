@@ -25,7 +25,7 @@ class PivotTransformer(Transformer):
                 doc["journal"] = article.find("span", attrs={"class": "DocPublicationName"}).text.strip()
             except Exception as e:
                 self._logger.warning("pas un article de presse")
-                self._log_error(e, article)
+                self._add_error(e, article)
                 continue
             try:
                 day, day_nb, month, year = date.findall(article.find("span", attrs={"class": "DocHeader"}).text)[
@@ -52,8 +52,7 @@ class PivotTransformer(Transformer):
 
             corpus.append(Pivot(**doc))
 
-        with open(f"errors-{file_to_transform.name}.json", "w", encoding="utf-8") as f:
-            json.dump([e.dict() for e in self.errors], f, ensure_ascii=False)
+
 
         return corpus
 

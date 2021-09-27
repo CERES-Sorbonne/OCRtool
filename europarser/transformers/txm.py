@@ -1,6 +1,6 @@
 from typing import List
 
-from europarser.models import FileToTransform, Pivot
+from europarser.models import Pivot
 from europarser.transformers.transformer import Transformer
 
 
