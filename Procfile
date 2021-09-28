@@ -1,1 +1,1 @@
-web: uvicorn eurparser_api:app
+web: uvicorn eurparser_api.api:app
