@@ -2,7 +2,7 @@ import io
 import os
 from typing import Optional, List
 
-from fastapi import FastAPI, File, UploadFile, Request, Form
+from fastapi import FastAPI, File, UploadFile, Request, Form, HTTPException
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -20,7 +20,9 @@ async def read_root(request: Request):
 
 
 @app.post("/upload")
-async def handle_files(files: List[UploadFile] = File(...), output: Optional[Output] = Form(...)):
+async def handle_files(files: List[UploadFile], output: Optional[Output] = Form(...)):
+    if len(files) == 1 and files[0].filename == "":
+        raise HTTPException(status_code=400, detail="No File Provided")
     # parse all files
     to_process = [FileToTransform(name=f.filename, file=f.file.read().decode('utf-8')) for f in files]
     # process result
