@@ -2,7 +2,8 @@ import io
 import os
 from typing import Optional, List
 
-from fastapi import FastAPI, File, UploadFile, Request, Form, HTTPException
+from fastapi import FastAPI, UploadFile, Request, Form, HTTPException, File
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -10,8 +11,11 @@ from europarser.models import FileToTransform, Output
 from europarser.transformers.pipeline import pipeline
 from europarser_api.utils import get_mimetype
 
+root_dir = os.path.dirname(__file__)
 app = FastAPI()
-templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
+
+app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -20,7 +24,7 @@ async def read_root(request: Request):
 
 
 @app.post("/upload")
-async def handle_files(files: List[UploadFile], output: Optional[Output] = Form(...)):
+async def handle_files(files: List[UploadFile] = File(...), output: Optional[Output] = Form(...)):
     if len(files) == 1 and files[0].filename == "":
         raise HTTPException(status_code=400, detail="No File Provided")
     # parse all files
