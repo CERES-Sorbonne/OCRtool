@@ -1,1 +1,1 @@
-web: uvicorn europarser_api.api:app --port $PORT
+web: uvicorn europarser_api.api:app --port $PORT --host:0.0.0.0
