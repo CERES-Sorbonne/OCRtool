@@ -1,1 +1,1 @@
-web: python setup.py install & pip install requirements-api.txt & uvicorn eurparser_api:app & wait -n
+web: uvicorn eurparser_api:app
