@@ -1,1 +1,1 @@
-web: uvicorn europarser_api.api:app
+web: uvicorn europarser_api.api:app --port $PORT
