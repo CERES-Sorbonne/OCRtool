@@ -1,4 +1,5 @@
 import io
+import re
 from typing import List
 
 from europarser.models import Pivot
@@ -10,13 +11,20 @@ class IramuteqTransformer(Transformer):
         super(IramuteqTransformer, self).__init__()
 
     def transform(self, pivot_list: List[Pivot]) -> str:
-        keys = pivot_list[0].dict().keys()
         with io.StringIO() as f:
-            head = f"**** {' '.join(['*' + k for k in keys])}"
-            f.write('\n')
-            f.write(head)
             for pivot in pivot_list:
-                f.write('\n')
-                values = " ".join(pivot.dict().values())
-                f.write(values)
+                dic = pivot.dict(exclude={'texte'})
+                f.write(f"""**** {' '.join([f"*{k}_{self._format_value(v)}" for k,v in dic.items()])}\n""")
+                f.write(pivot.texte)
+                f.write('\n\n')
             return f.getvalue()
+
+    @staticmethod
+    def _format_value(value: str):
+        value = re.sub(r"[éèê]", "e", value)
+        value = re.sub(r"ô", "o", value)
+        value = re.sub(r"à", "a", value)
+        value = re.sub(r"œ", "oe", value)
+        value = re.sub(r"[-':().=?!,;<>«»]", ' ', value)
+        return ''.join([w.capitalize() for w in value.split(' ')])
+
