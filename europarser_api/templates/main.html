@@ -3,23 +3,21 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Europress Parser</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;400&display=swap" rel="stylesheet">
   <link href="{{ url_for('static', path='/dropzone.min.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', path='/basic.min.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <script src="{{ url_for('static', path='/dropzone.min.js') }}"></script>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
       font-weight: 400;
       background-color: #91d1df;
-    }
-
-    #wrapper {
-      width: 50%;
-      margin: auto;
     }
 
     #myDropzone {
@@ -33,45 +31,69 @@
     .myButton {
       padding: 0.5em;
       border-radius: 0.5em;
-      margin: 1em;
-      margin-left: auto;
       display: block;
-      margin-right: auto;
       border: solid 0.1px grey;
     }
 
-    .myButton:hover{
+    .myButton:hover {
       cursor: pointer;
-      background-color: #cbf5ff;
+      background-color: #ffffff;
+    }
+
+    .mySelect {
+      border: 0px;
+      outline: 0px;
+      padding: 0.5em;
+      border-radius: 1em;
+    }
+
+    .mySelect:hover {
+      cursor: pointer;
+      background-color: #dddddd;
+    }
+
+    .myBlock{
+      display: block;
+      margin: auto;
     }
   </style>
 </head>
 
 <body>
-  <div style="width: 30%;margin: auto; text-align: center">
+  
+  <div class="mt-5" style="width: 30%;margin: auto; text-align: center">
     <h1 style="font-weight: 100">Europress Converter</h1>
-    <h5 style="font-weight: 400">Convert Europress HTML Files to some text analysis formats</h5>
+    <h5 style="font-weight: 100">Convert Europress HTML Files to some text analysis formats</h5>
   </div>
   <!-- <form action="/upload" class="dropzone" id="my-great-dropzone"> -->
-  <div id="wrapper">
-    <form method="post" enctype="multipart/form-data" action="/upload" id="myForm">
-      <div class="dropzone" id="myDropzone"></div>
-      <select class="myButton" name="output" id="output">
-        <option value="iramuteq">IramuTeq</option>
-        <option value="pivot">Pivot</option>
-        <option value="cluster_tool">Cluster Tool</option>
-      </select>
-    </form>
+  <div class="container mt-5">
     <div>
-      <button class="myButton" type="submit" id="submit-all"> upload </button>
+      <div class="" style="display: flex;
+      flex-direction: column;
+      justify-content: center; ">
+        <form method="post" enctype="multipart/form-data" action="/upload" id="myForm">
+          <div class="dropzone mb-3" id="myDropzone"></div>
+          <select class="form-select form-select-lg mb-3 mySelect myBlock" aria-label=".form-select-lg example" id="output"
+            name="output">
+            <option selected>Chose the output Format</option>
+            <option value="iramuteq">IramuTeq</option>
+            <option value="pivot">Pivot</option>
+            <option value="cluster_tool">Cluster Tool</option>
+          </select>
+          <button id="submit-all" type="submit" class="btn btn-primary myBlock">Upload</button>
+        </form>
+        <div class="spinner-border text-light myBlock mt-3" role="status" id="loader" style="display: none;">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <a href="#" id="download" class="btn btn-success" role="button" aria-pressed="true" style="display: none; width: 20%; margin: auto">Download Result</a>
+      </div>
     </div>
   </div>
   <script>
     function saveBlob(blob, fileName) {
-      var a = document.createElement('a');
-      a.href = window.URL.createObjectURL(blob);
-      a.download = fileName;
-      a.dispatchEvent(new MouseEvent('click'));
+      var download = document.getElementById('download');
+      download.href = window.URL.createObjectURL(blob);
+      download.download = fileName;
     }
 
     Dropzone.options.myDropzone = {
@@ -101,12 +123,16 @@
             let blob = new Blob([el], { type: el.type });
             formData.append("files", blob, el.name)
           }
+          document.getElementById('loader').style.display = "block"
+          document.getElementById('submit-all').style.display = "none"
           xhr.responseType = 'blob';
           xhr.onload = function (e) {
             var blob = e.currentTarget.response;
             var contentDispo = e.currentTarget.getResponseHeader('Content-Disposition');
             // https://stackoverflow.com/a/23054920/
             var fileName = contentDispo.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)[1];
+            document.getElementById('download').style.display = "block";
+            document.getElementById('loader').style.display = "none"
             saveBlob(blob, fileName);
           }
           xhr.send(formData)
@@ -114,6 +140,15 @@
       }
     }
   </script>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>

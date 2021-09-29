@@ -25,6 +25,7 @@ class IramuteqTransformer(Transformer):
         value = re.sub(r"ô", "o", value)
         value = re.sub(r"à", "a", value)
         value = re.sub(r"œ", "oe", value)
-        value = re.sub(r"[-':().=?!,;<>«»]", ' ', value)
+        value = re.sub(r"[ïîì]", "i", value)
+        value = re.sub(r"""[-\[\]'":().=?!,;<>«»—^*\\/]""", ' ', value)
         return ''.join([w.capitalize() for w in value.split(' ')])
 
