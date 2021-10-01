@@ -4,6 +4,7 @@ from typing import List, Tuple
 from europarser.models import FileToTransform, Output, Pivot, OutputType
 from europarser.transformers.iramuteq import IramuteqTransformer
 from europarser.transformers.pivot import PivotTransformer
+from europarser.transformers.txm import TXMTransformer
 
 
 def pipeline(files: List[FileToTransform], output: Output = "pivot") -> Tuple[str, OutputType]:
@@ -17,6 +18,9 @@ def pipeline(files: List[FileToTransform], output: Output = "pivot") -> Tuple[st
     elif output == "iramuteq":
         result = IramuteqTransformer().transform(pivots)
         result_type = "txt"
+    elif output == "txm":
+        result = TXMTransformer().transform(pivots)
+        result_type = "xml"
     else:
         result = json.dumps([pivot.dict() for pivot in pivots], ensure_ascii=False)
         result_type: OutputType = "json"
