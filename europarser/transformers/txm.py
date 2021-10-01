@@ -1,4 +1,7 @@
 import io
+import re
+import xml.dom.minidom as dom
+from xml.sax.saxutils import escape
 from typing import List
 
 from europarser.models import Pivot
@@ -13,19 +16,10 @@ class TXMTransformer(Transformer):
         with io.StringIO() as f:
             f.write("<corpus>")
             for pivot in pivot_list:
-                f.write("<article>")
-                f.write("<titre>")
-                f.write(pivot.titre)
-                f.write("</titre>")
-                f.write("<journal>")
-                f.write(pivot.journal)
-                f.write("</journal>")
-                f.write("<date>")
-                f.write(pivot.date)
-                f.write("</date>")
-                f.write("<texte>")
-                f.write(pivot.texte)
-                f.write("</texte>")
+                parsed = escape(pivot.texte.strip())
+                line = f"""<article titre="{re.sub('"', "'", escape(pivot.titre))}" date="{escape(pivot.date)}" journal="{escape(pivot.journal)}">"""
+                f.write(line)
+                f.write(parsed)
                 f.write("</article>")
             f.write("</corpus>")
-            return f.getvalue()
+            return dom.parseString(f.getvalue()).toprettyxml()
