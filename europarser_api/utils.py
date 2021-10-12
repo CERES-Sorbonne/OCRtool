@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Tuple
 
 from europarser.models import OutputType
 
@@ -14,3 +14,8 @@ def get_mimetype(output_type: OutputType) -> MimeType:
         return "text/plain"
     elif output_type == "xml":
         return "text/xml"
+
+
+def pipeline(directory: str, output_type: OutputType) -> Tuple[str, OutputType]:
+    # call suprocess here
+    pass

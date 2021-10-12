@@ -1,5 +1,7 @@
 import io
 import os
+import tempfile
+import uuid
 from typing import Optional, List
 
 from fastapi import FastAPI, UploadFile, Request, Form, HTTPException, File
@@ -27,12 +29,16 @@ async def read_root(request: Request):
 async def handle_files(files: List[UploadFile] = File(...), output: Optional[Output] = Form(...)):
     if len(files) == 1 and files[0].filename == "":
         raise HTTPException(status_code=400, detail="No File Provided")
-    # parse all files
-    to_process = [FileToTransform(name=f.filename, file=f.file.read().decode('utf-8')) for f in files]
-    # process result
-    result, result_type = pipeline(to_process, output)
-    result_mimetype = get_mimetype(result_type)
-    # stream result as file
-    response = StreamingResponse(io.StringIO(result), media_type=result_mimetype)
-    response.headers["Content-Disposition"] = f"attachment; filename=result.{result_type}"
-    return response
+    with tempfile.tempdir as directory:
+        for file in files:
+            path = os.path.join(directory, f"{str(uuid.uuid4())}.pdf")
+            with open(path, 'wb') as f:
+                f.write(file.file.read())
+        result, result_type = pipeline(directory, output)
+        # parse all files
+        # process result
+        result_mimetype = get_mimetype(result_type)
+        # stream result as file
+        response = StreamingResponse(io.StringIO(result), media_type=result_mimetype)
+        response.headers["Content-Disposition"] = f"attachment; filename=result.{result_type}"
+        return response
