@@ -32,11 +32,11 @@ def get_mimetype(output_type: OutputType) -> MimeType:
 
 def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, OutputType]:
     result_type: OutputType = "zip"
-    ocr_output = "txt" if output_type in ['txt', 'xml'] else "html"
+    ocr_output, flag = ["txt", "t"] if output_type in ['txt', 'xml'] else ["html", 'h']
     s = io.BytesIO()
     zf = zipfile.ZipFile(s, "w")
     pdf_names = [f.split('.')[0] for f in os.listdir(directory)]
-    subprocess.check_call([r"/home/tyra/Documents/CERES/ocr/test.sh", directory])
+    subprocess.check_call([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory])
     for pdf_name in pdf_names:
         res = "<document>" if output_type == "xml" else ""
         path = os.path.join(directory, pdf_name)
