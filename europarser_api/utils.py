@@ -32,17 +32,16 @@ def get_mimetype(output_type: OutputType) -> MimeType:
 
 def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, OutputType]:
     result_type: OutputType = "zip"
-    ocr_output, flag = ["txt", "t"] if output_type in ['txt', 'xml'] else ["html", 'h']
+    ocr_output, flag = ["txt", "-t"] if output_type in ['txt', 'xml'] else ["html", '-h']
     s = io.BytesIO()
     zf = zipfile.ZipFile(s, "w")
     pdf_names = [f.split('.')[0] for f in os.listdir(directory)]
     subprocess.check_call([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory])
     for pdf_name in pdf_names:
         res = "<document>" if output_type == "xml" else ""
-        path = os.path.join(directory, pdf_name)
-        files = [f for f in os.listdir(path) if f.endswith(ocr_output)]
+        files = [f for f in os.listdir(directory) if f.startswith(pdf_name) and f.endswith(ocr_output)]
         for i, f in enumerate(files):
-            with open(os.path.join(path, f), 'r') as fb:
+            with open(os.path.join(directory, f), 'r') as fb:
                 if output_type == "xml":
                     res += f'<page id="{i + 1}">'
                     res += escape(fb.read())
