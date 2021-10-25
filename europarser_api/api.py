@@ -12,7 +12,6 @@ from europarser_api.utils import get_mimetype, pipeline, Output
 root_dir = os.path.dirname(__file__)
 app = FastAPI()
 host = os.getenv('OCR_SERVER', '')
-
 app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
