@@ -1,12 +1,10 @@
-import io
 import os
 import tempfile
-import uuid
 from typing import Optional, List
 
 from fastapi import FastAPI, UploadFile, Request, Form, HTTPException, File
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from europarser_api.utils import get_mimetype, pipeline, Output
@@ -14,7 +12,7 @@ from europarser_api.utils import get_mimetype, pipeline, Output
 root_dir = os.path.dirname(__file__)
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
+app.mount("/ocr/static", StaticFiles(directory=os.path.join(root_dir, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(root_dir, "templates"))
 
 
