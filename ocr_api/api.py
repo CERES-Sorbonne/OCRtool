@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
-from europarser_api.utils import get_mimetype, pipeline, Output
+from ocr_api.utils import get_mimetype, pipeline, Output
 
 root_dir = os.path.dirname(__file__)
 app = FastAPI()

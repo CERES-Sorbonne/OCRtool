@@ -1,2 +1,5 @@
-beautifulsoup4
-pydantic
+fastapi
+uvicorn[standard]
+python-multipart
+jinja2
+aiofiles
