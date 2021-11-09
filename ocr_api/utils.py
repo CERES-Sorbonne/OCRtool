@@ -48,8 +48,6 @@ def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, Outpu
     for pdf_name in pdf_names:
         res = "<document>" if output_type == "xml" else ""
         files = [f for f in os.listdir(directory) if f.startswith(pdf_name) and f.endswith(ocr_output)]
-        logging.getLogger('ocr_api').info("Output files:")
-        logging.getLogger('ocr_api').info(files)
         if len(files) == 0:
             raise HTTPException(status_code=500, detail="There was an error during document conversion")
         for i, f in enumerate(files):
