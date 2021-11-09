@@ -39,7 +39,7 @@ def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, Outpu
     s = io.BytesIO()
     zf = zipfile.ZipFile(s, "w")
     pdf_names = [f.split('.')[0] for f in os.listdir(directory)]
-    with subprocess.check_call([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory],
+    with subprocess.Popen([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory],
                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
         logging.getLogger('ocr_api').warning(proc.stdout.read())
 
