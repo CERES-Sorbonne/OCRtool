@@ -27,6 +27,8 @@ async def handle_files(files: List[UploadFile] = File(...), output: Optional[Out
         raise HTTPException(status_code=400, detail="No File Provided")
     with tempfile.TemporaryDirectory() as directory:
         for file in files:
+            if not file.filename.endswith('.pdf'):
+                raise HTTPException(status_code=400, detail="Invalid file provided: " + file.filename)
             path = os.path.join(directory, file.filename)
             with open(path, 'wb') as f:
                 f.write(file.file.read())
