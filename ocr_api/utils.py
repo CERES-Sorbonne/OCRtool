@@ -39,15 +39,15 @@ def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, Outpu
     s = io.BytesIO()
     zf = zipfile.ZipFile(s, "w")
     pdf_names = [f.split('.')[0] for f in os.listdir(directory)]
-    with subprocess.Popen([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory],
-                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT) as proc:
-        logging.getLogger('ocr_api').warning(proc.stdout.read())
-
+    proc = subprocess.Popen([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
+        logging.getLogger('ocr_api').warning(line)
+    return_code = proc.wait(300)
+    if return_code != 0:
+        raise HTTPException(status_code=500, detail="There was an error during document conversion")
     for pdf_name in pdf_names:
         res = "<document>" if output_type == "xml" else ""
         files = [f for f in os.listdir(directory) if f.startswith(pdf_name) and f.endswith(ocr_output)]
-        if len(files) == 0:
-            raise HTTPException(status_code=500, detail="There was an error during document conversion")
         for i, f in enumerate(files):
             with open(os.path.join(directory, f), 'r') as fb:
                 if output_type == "xml":
