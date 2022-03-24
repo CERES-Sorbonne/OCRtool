@@ -29,7 +29,7 @@ async def handle_files(files: List[UploadFile] = File(...), output: Optional[Out
         for file in files:
             if not file.filename.endswith('.pdf'):
                 raise HTTPException(status_code=400, detail="Invalid file provided: " + file.filename)
-            path = os.path.join(directory, file.filename)
+            path = os.path.join(directory, file.filename.replace(' ', '_'))
             with open(path, 'wb') as f:
                 f.write(file.file.read())
         result, result_type = pipeline(directory, output)
