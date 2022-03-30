@@ -29,7 +29,7 @@ async def handle_files(files: List[UploadFile] = File(...), output: Optional[Out
         for file in files:
             if not file.filename.endswith('.pdf'):
                 raise HTTPException(status_code=400, detail="Invalid file provided: " + file.filename)
-            path = os.path.join(directory, file.filename)
+            path = os.path.join(directory, file.filename.replace(' ', '_'))
             with open(path, 'wb') as f:
                 f.write(file.file.read())
         result, result_type = pipeline(directory, output)
@@ -40,11 +40,3 @@ async def handle_files(files: List[UploadFile] = File(...), output: Optional[Out
         response = Response(result.getvalue(), media_type=result_mimetype)
         response.headers["Content-Disposition"] = f"attachment; filename=result.{result_type}"
         return response
-
-
-@app.post("/comment")
-async def handle_comment(files: UploadFile, comment: Optional[str] = Form(...)):
-    with open(os.path.join(os.getenv('OCR_ROOT_DIR'), files.filename), 'wb') as f:
-        f.write(files.file.read())
-    with open(os.path.join(os.getenv('OCR_ROOT_DIR'), files.filename.split('.pdf')[0] + '.txt'), 'w') as f:
-        f.write(comment)
