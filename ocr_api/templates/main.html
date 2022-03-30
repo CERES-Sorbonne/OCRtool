@@ -12,6 +12,9 @@
   <link href="{{host + '/static/basic.min.css'}}" rel="stylesheet">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+
+  </script>
   <script src="{{host + '/static/dropzone.min.js'}}"></script>
   <style>
     body {
@@ -83,17 +86,49 @@
           </select>
           <button id="submit-all" type="submit" class="btn btn-primary myBlock">Upload</button>
         </form>
+          <form method="post" enctype="multipart/form-data" action="" id="commentForm" style="display: none">
+              <div class="mb-3 w-50">
+              <label for="formFile" class="form-label">Uploader fichier en erreur</label>
+              <input class="form-control" type="file" name="files" id="files">
+            </div>
+              <div class="form-group">
+                <label for="text_comment">En Cas de problème avec l'un des fichiers, merci d'uploader à nouveau le fichier et de décrire le problème en commantaire.</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+              </div>
+              <button id="submit-comment" type="submit" class="btn btn-primary myBlock">Valider</button>
+        </form>
         <div class="spinner-border text-light myBlock mt-3" role="status" id="loader" style="display: none;">
           <span class="sr-only">Loading...</span>
         </div>
         <a href="#" id="download" class="btn btn-success" role="button" aria-pressed="true" style="display: none; width: 20%; margin: auto">Download Result</a>
-        <div id="error" class="alert alert-danger" role="alert" style="display: none;">
+        <div id="error" class="mt-2 alert alert-danger" role="alert" style="display: none;">
           Error
+        </div>
+          <div id="success" class="mt-2 alert alert-success" role="alert" style="display: none;">
+          Success
         </div>
       </div>
     </div>
   </div>
   <script>
+      $('#commentForm').submit(function(e) {
+          var data = new FormData()
+          data.append('files', $('#files')[0].files[0])
+          data.append('comment', $('#comment').val())
+          $.ajax({
+              type: 'POST',
+              url: "{{host + '/comment'}}",
+              data: data,
+              contentType: false,
+              processData: false,
+              success: function(data) {
+                  document.getElementById('error').style.display = "none";
+                  document.getElementById('success').style.display = "block";
+              }
+          })
+          e.preventDefault()
+          return false;
+      });
     function saveBlob(blob, fileName) {
       var download = document.getElementById('download');
       download.href = window.URL.createObjectURL(blob);
@@ -135,6 +170,8 @@
               document.getElementById('loader').style.display = "none"
               document.getElementById('error').innerHTML = e.currentTarget.statusText;
               document.getElementById('error').style.display = "block";
+              document.getElementById('commentForm').style.display = "block";
+              document.getElementById('myForm').style.display = "none";
             }
             var blob = e.currentTarget.response;
             var contentDispo = e.currentTarget.getResponseHeader('Content-Disposition');
@@ -149,9 +186,6 @@
       }
     }
   </script>
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
     integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
     crossorigin="anonymous"></script>

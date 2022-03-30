@@ -39,7 +39,7 @@ def pipeline(directory: str, output_type: OutputType) -> Tuple[io.BytesIO, Outpu
     s = io.BytesIO()
     zf = zipfile.ZipFile(s, "w")
     pdf_names = [f.split('.')[0] for f in os.listdir(directory)]
-    proc = subprocess.Popen([os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = subprocess.Popen([r'D:\Alie\Documents\tools\cmder\vendor\git-for-windows\git-bash.exe', os.getenv("OCR_SCRIPT"), '-p', flag, '-k', directory], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for line in io.TextIOWrapper(proc.stdout, encoding="utf-8"):
         logging.getLogger('ocr_api').warning(line.rstrip())
     return_code = proc.wait(300)
