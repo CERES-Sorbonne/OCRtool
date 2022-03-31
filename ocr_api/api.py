@@ -43,7 +43,7 @@ async def handle_files(files: List[UploadFile] = File(...), output: Optional[Out
 
 
 @app.post("/comment")
-async def handle_comment(files: UploadFile, comment: Optional[str] = Form(...)):
+async def handle_comment(files: UploadFile = File(...), comment: Optional[str] = Form(...)):
     with open(os.path.join(os.getenv('OCR_ROOT_DIR'), files.filename), 'wb') as f:
         f.write(files.file.read())
     with open(os.path.join(os.getenv('OCR_ROOT_DIR'), files.filename.split('.pdf')[0] + '.txt'), 'w') as f:
