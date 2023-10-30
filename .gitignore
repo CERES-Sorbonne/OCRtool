@@ -138,3 +138,6 @@ dmypy.json
 cython_debug/
 
 errors*
+
+/venv_kraken/
+/.idea/
